@@ -1,25 +1,29 @@
 package artscollection
 
-import "errors"
+import (
+	"errors"
+
+	"github.com/OpenGLAMTools/artscollection/storage"
+)
 
 type Loader interface {
 	Load() *Collection
 }
 
 type Adder interface {
-	Add(*Item) error
+	Add(storage.Storager) error
 }
 
 type Updater interface {
-	Update(*Item) error
+	Update(storage.Storager) error
 }
 
 type Remover interface {
-	Remove(*Item)
+	Remove(storage.Storager)
 }
 
 type Collection struct {
-	Artworks    []Item
+	Artworks    []storage.Storager
 	Title       string
 	Description string
 	DataFields  []Field
@@ -27,7 +31,7 @@ type Collection struct {
 
 type Item interface {
 	Filepath() string
-	GetStorage() *Storage
+	GetStorage() storage.Storager
 }
 
 // Storage defines all the supported types and represents the API
