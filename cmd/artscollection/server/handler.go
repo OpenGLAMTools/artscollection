@@ -1,6 +1,7 @@
 package server
 
 import (
+	"io/ioutil"
 	"log"
 	"net/http"
 
@@ -38,12 +39,17 @@ func writeBytes(b []byte, w http.ResponseWriter) {
 	_, err := w.Write(b)
 	errorLog(err)
 }
+
+func postItemHandler(w http.ResponseWriter, r *http.Request) {
+	rbody, err := ioutil.ReadAll(r.Body)
+	errorLog(err)
+	var item collection.Item
+	err = item.Unmarshal(rbody)
+	errorLog(err)
+}
+
 func errorLog(err error) {
 	if err != nil {
 		log.Println(err)
 	}
-}
-
-func saveItemHandler(w http.ResponseWriter, r *http.Request) {
-
 }

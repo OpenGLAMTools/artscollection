@@ -14,7 +14,7 @@ func Serve() {
 	router := mux.NewRouter()
 	router.HandleFunc("/collection/{collection}", collectionHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", itemHandler).Methods("GET")
-	router.HandleFunc("/collection/{collection}/{item}", saveItemHandler).Methods("POST")
+	router.HandleFunc("/collection/{collection}/{item}", postItemHandler).Methods("POST")
 	fmt.Println("Starting server", ServerPort)
 	err := http.ListenAndServe(ServerPort, router)
 	if err != nil {
