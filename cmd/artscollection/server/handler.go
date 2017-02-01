@@ -22,7 +22,7 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
 	vars := mux.Vars(r)
 	itemID := vars["item"]
-	item := coll.GetItem(itemID)
+	item, _ := coll.GetItem(itemID)
 	b, err := item.Marshal()
 	errorLog(err)
 	writeBytes(b, w)
