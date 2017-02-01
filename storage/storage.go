@@ -10,8 +10,9 @@ type Setter interface {
 // Getter is used to get data out of the storage
 type Getter interface {
 	Get(fieldID string) (interface{}, bool)
-	//GetInt(fieldID string) (int, bool)
-	//GetString(fieldID string) (string, bool)
+	GetInt(fieldID string) (int, bool)
+	GetString(fieldID string) (string, bool)
+	GetBool(fieldID string) (bool, bool)
 }
 
 // Storager combines the interfaces

@@ -53,6 +53,7 @@ func (txt *Txt) Set(fieldID string, value interface{}) error {
 	return nil
 }
 
+// Get returns a value from the storage
 func (txt *Txt) Get(fieldID string) (interface{}, bool) {
 	var out interface{}
 	f, ok := txt.GetField(fieldID)
@@ -71,6 +72,38 @@ func (txt *Txt) Get(fieldID string) (interface{}, bool) {
 		return out, false
 	}
 	return out, true
+}
+
+func (txt *Txt) GetString(fieldID string) (string, bool) {
+	if !txt.checkType(fieldID, "string") {
+		var out string
+		return out, false
+	}
+	return txt.Strings[fieldID], true
+}
+
+func (txt *Txt) GetInt(fieldID string) (int, bool) {
+	if !txt.checkType(fieldID, "int") {
+		var out int
+		return out, false
+	}
+	return txt.Integers[fieldID], true
+}
+
+func (txt *Txt) GetBool(fieldID string) (bool, bool) {
+	if !txt.checkType(fieldID, "bool") {
+		var out bool
+		return out, false
+	}
+	return txt.Bools[fieldID], true
+}
+
+func (txt *Txt) checkType(fieldID, fieldType string) bool {
+	f, ok := txt.GetField(fieldID)
+	if !ok {
+		return false
+	}
+	return f.Type == fieldType
 }
 
 // GetField returns the field
@@ -99,8 +132,8 @@ func (txt *Txt) Unmarshal(b []byte) error {
 	return json.Unmarshal(b, txt)
 }
 
-// Load a Txt storage from a file
-func Load(filename string) (*Txt, error) {
+// LoadTxt loads a Txt storage from a file
+func LoadTxt(filename string) (*Txt, error) {
 	b, err := ioutil.ReadFile(filename)
 	if err != nil {
 		return nil, err
@@ -113,8 +146,8 @@ func Load(filename string) (*Txt, error) {
 	return txt, nil
 }
 
-// Write a Txt Storage to a file
-func Write(txt *Txt, filename string) error {
+// WriteTxt writes a Txt Storage to a file
+func WriteTxt(txt *Txt, filename string) error {
 	b, err := txt.Marshal()
 	if err != nil {
 		return err
