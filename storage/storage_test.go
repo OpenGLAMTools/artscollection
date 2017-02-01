@@ -39,9 +39,6 @@ func TestGetterInterface(t *testing.T) {
 		if gotType != tcase.expect {
 			t.Errorf("Expect: %s; Got: %s", tcase.expect, gotType)
 		}
-		fmt.Printf("%T\n", got)
 	}
 
-	i, _ := mockStorage.Get("int")
-	fmt.Println(i)
 }
