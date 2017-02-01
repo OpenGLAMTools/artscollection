@@ -3,11 +3,10 @@ package storage
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
 )
 
 type Txt struct {
-	Fields   []Field
+	Fields   []*Field
 	Strings  map[string]string
 	Integers map[string]int
 	Bools    map[string]bool
@@ -107,17 +106,17 @@ func (txt *Txt) checkType(fieldID, fieldType string) bool {
 }
 
 // GetField returns the field
-func (txt *Txt) GetField(fieldID string) (Field, bool) {
+func (txt *Txt) GetField(fieldID string) (*Field, bool) {
 	for _, f := range txt.Fields {
 		if f.ID() == fieldID {
 			return f, true
 		}
 	}
-	return Field{}, false
+	return &Field{}, false
 }
 
 // AddField adds a field to the storage
-func (txt *Txt) AddField(f Field) error {
+func (txt *Txt) AddField(f *Field) error {
 	txt.Fields = append(txt.Fields, f)
 	return nil
 }
@@ -130,27 +129,4 @@ func (txt *Txt) Marshal() ([]byte, error) {
 // Unmarshal uses json to set all the data into the Txt instance.
 func (txt *Txt) Unmarshal(b []byte) error {
 	return json.Unmarshal(b, txt)
-}
-
-// LoadTxt loads a Txt storage from a file
-func LoadTxt(filename string) (*Txt, error) {
-	b, err := ioutil.ReadFile(filename)
-	if err != nil {
-		return nil, err
-	}
-	txt := NewTxtStorage()
-	err = txt.Unmarshal(b)
-	if err != nil {
-		return nil, err
-	}
-	return txt, nil
-}
-
-// WriteTxt writes a Txt Storage to a file
-func WriteTxt(txt *Txt, filename string) error {
-	b, err := txt.Marshal()
-	if err != nil {
-		return err
-	}
-	return ioutil.WriteFile(filename, b, 0777)
 }

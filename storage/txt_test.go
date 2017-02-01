@@ -5,29 +5,29 @@ import (
 	"testing"
 )
 
-var testFields = []Field{
-	Field{
+var testFields = []*Field{
+	&Field{
 		Key:   "4",
 		Name:  "Feld1Int",
 		Type:  "int",
 		Group: "",
 		Order: 4,
 	},
-	Field{
+	&Field{
 		Key:   "2",
 		Name:  "Feld2",
 		Type:  "string",
 		Group: "g1",
 		Order: 2,
 	},
-	Field{
+	&Field{
 		Key:   "3",
 		Name:  "Feld3",
 		Type:  "string",
 		Group: "g1",
 		Order: 3,
 	},
-	Field{
+	&Field{
 		Key:   "1",
 		Name:  "Feld1",
 		Type:  "bool",
