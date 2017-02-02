@@ -19,12 +19,14 @@ var FieldsConfFile = "conf.yaml"
 type Collection struct {
 	Fields   storage.Fields
 	Storages map[string]storage.Storager
+	fpath    string
 }
 
 // NewCollection returns an empty collection
-func NewCollection() *Collection {
+func NewCollection(fpath string) *Collection {
 	return &Collection{
 		Storages: make(map[string]storage.Storager),
+		fpath:    fpath,
 	}
 }
 
@@ -34,13 +36,36 @@ func (c *Collection) GetItem(ID string) (storage.Storager, bool) {
 	return i, ok
 }
 
+func (c *Collection) WriteItem(ID string, s storage.Storager) error {
+	itemPath := filepath.Join(
+		c.Path(),
+		ID,
+		StorageFile,
+	)
+	return storage.Write(s, itemPath)
+}
+
 // Marshal returns the whole collection as json object
 func (c *Collection) Marshal() ([]byte, error) {
 	return json.MarshalIndent(c, "", "  ")
 }
 
+// Path returns the root path to the collection
+func (c *Collection) Path() string {
+	return c.fpath
+}
+
 func Load(fpath string) (*Collection, error) {
-	c := NewCollection()
+	c := NewCollection(fpath)
+	confFile := filepath.Join(
+		fpath,
+		FieldsConfFile,
+	)
+	var err error
+	c.Fields, err = storage.LoadFields(confFile)
+	if err != nil {
+		return c, err
+	}
 	dir, err := ioutil.ReadDir(fpath)
 	if err != nil {
 		return c, err
@@ -59,15 +84,11 @@ func Load(fpath string) (*Collection, error) {
 		if err != nil {
 			return c, err
 		}
+		if len(s.Fields) == 0 {
+			s.Fields = c.Fields
+		}
 		c.Storages[fi.Name()] = s
 	}
-	confFile := filepath.Join(
-		fpath,
-		FieldsConfFile,
-	)
-	c.Fields, err = storage.LoadFields(confFile)
-	if err != nil {
-		return c, err
-	}
+
 	return c, nil
 }

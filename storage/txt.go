@@ -6,10 +6,10 @@ import (
 )
 
 type Txt struct {
-	Fields   Fields
-	Strings  map[string]string
-	Integers map[string]int
-	Bools    map[string]bool
+	Fields   Fields            `json:"fields"`
+	Strings  map[string]string `json:"strings"`
+	Integers map[string]int    `json:"integers"`
+	Bools    map[string]bool   `json:"bools,omitempty"`
 }
 
 var ErrTypeNotSupported = errors.New("Type is not supported!")

@@ -1,8 +1,6 @@
 package storage
 
 import (
-	"encoding/json"
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -38,10 +36,11 @@ var testFields = Fields{
 	},
 }
 
+/*
 func TestConfMarshal(t *testing.T) {
 	b, _ := json.Marshal(testFields)
 	fmt.Println(string(b))
-}
+}*/
 
 func TestSet(t *testing.T) {
 	testCases := []struct {
