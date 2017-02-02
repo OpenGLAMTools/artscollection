@@ -8,13 +8,16 @@ import (
 	"github.com/OpenGLAMTools/artscollection/storage"
 )
 
-// StorageFileName is the default name
-var StorageFileName = "data.json"
+// StorageFile is the default name
+var StorageFile = "data.json"
+
+// FieldsConfFile defines the default values for the storages
+var FieldsConfFile = "conf.yaml"
 
 // Collection defines the fields for a storage that fields are used as
 // default for new storages.
 type Collection struct {
-	Fields   []*storage.Field
+	Fields   storage.Fields
 	Storages map[string]storage.Storager
 }
 
@@ -49,7 +52,7 @@ func Load(fpath string) (*Collection, error) {
 		storagePath := filepath.Join(
 			fpath,
 			fi.Name(),
-			StorageFileName,
+			StorageFile,
 		)
 		s := storage.NewTxtStorage()
 		err = storage.Load(storagePath, s)
@@ -57,6 +60,14 @@ func Load(fpath string) (*Collection, error) {
 			return c, err
 		}
 		c.Storages[fi.Name()] = s
+	}
+	confFile := filepath.Join(
+		fpath,
+		FieldsConfFile,
+	)
+	c.Fields, err = storage.LoadFields(confFile)
+	if err != nil {
+		return c, err
 	}
 	return c, nil
 }

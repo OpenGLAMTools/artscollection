@@ -23,7 +23,11 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
 	vars := mux.Vars(r)
 	itemID := vars["item"]
-	item, _ := coll.GetItem(itemID)
+	item, ok := coll.GetItem(itemID)
+	if !ok {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	b, err := item.Marshal()
 	errorLog(err)
 	writeBytes(b, w)

@@ -6,7 +6,7 @@ import (
 )
 
 type Txt struct {
-	Fields   []*Field
+	Fields   Fields
 	Strings  map[string]string
 	Integers map[string]int
 	Bools    map[string]bool
@@ -106,22 +106,22 @@ func (txt *Txt) checkType(fieldID, fieldType string) bool {
 }
 
 // GetField returns the field
-func (txt *Txt) GetField(fieldID string) (*Field, bool) {
+func (txt *Txt) GetField(fieldID string) (Field, bool) {
 	for _, f := range txt.Fields {
 		if f.ID() == fieldID {
 			return f, true
 		}
 	}
-	return &Field{}, false
+	return Field{}, false
 }
 
 // GetFields returns all fields
-func (txt *Txt) GetFields() ([]*Field, error) {
+func (txt *Txt) GetFields() (Fields, error) {
 	return txt.Fields, nil
 }
 
 // AddField adds a field to the storage
-func (txt *Txt) AddField(f *Field) error {
+func (txt *Txt) AddField(f Field) error {
 	txt.Fields = append(txt.Fields, f)
 	return nil
 }
