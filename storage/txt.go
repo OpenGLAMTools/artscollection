@@ -115,6 +115,11 @@ func (txt *Txt) GetField(fieldID string) (*Field, bool) {
 	return &Field{}, false
 }
 
+// GetFields returns all fields
+func (txt *Txt) GetFields() ([]*Field, error) {
+	return txt.Fields, nil
+}
+
 // AddField adds a field to the storage
 func (txt *Txt) AddField(f *Field) error {
 	txt.Fields = append(txt.Fields, f)

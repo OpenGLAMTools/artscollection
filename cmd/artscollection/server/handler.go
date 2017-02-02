@@ -6,10 +6,11 @@ import (
 	"net/http"
 
 	"github.com/OpenGLAMTools/artscollection/collection"
+	"github.com/OpenGLAMTools/artscollection/storage"
 	"github.com/gorilla/mux"
 )
 
-var artscollection map[string]collection.Collection
+var Artscollection map[string]*collection.Collection
 
 func collectionHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
@@ -28,10 +29,10 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 	writeBytes(b, w)
 }
 
-func getCollection(r *http.Request) collection.Collection {
+func getCollection(r *http.Request) *collection.Collection {
 	vars := mux.Vars(r)
 	collID := vars["collection"]
-	coll := artscollection[collID]
+	coll := Artscollection[collID]
 	return coll
 }
 
@@ -43,7 +44,7 @@ func writeBytes(b []byte, w http.ResponseWriter) {
 func postItemHandler(w http.ResponseWriter, r *http.Request) {
 	rbody, err := ioutil.ReadAll(r.Body)
 	errorLog(err)
-	var item collection.Item
+	var item storage.Storager
 	err = item.Unmarshal(rbody)
 	errorLog(err)
 }

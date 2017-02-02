@@ -2,9 +2,14 @@ package collection
 
 import (
 	"encoding/json"
+	"io/ioutil"
+	"path/filepath"
 
 	"github.com/OpenGLAMTools/artscollection/storage"
 )
+
+// StorageFileName is the default name
+var StorageFileName = "data.json"
 
 // Collection defines the fields for a storage that fields are used as
 // default for new storages.
@@ -28,5 +33,30 @@ func (c *Collection) GetItem(ID string) (storage.Storager, bool) {
 
 // Marshal returns the whole collection as json object
 func (c *Collection) Marshal() ([]byte, error) {
-	return json.Marshal(c)
+	return json.MarshalIndent(c, "", "  ")
+}
+
+func Load(fpath string) (*Collection, error) {
+	c := NewCollection()
+	dir, err := ioutil.ReadDir(fpath)
+	if err != nil {
+		return c, err
+	}
+	for _, fi := range dir {
+		if !fi.IsDir() {
+			continue
+		}
+		storagePath := filepath.Join(
+			fpath,
+			fi.Name(),
+			StorageFileName,
+		)
+		s := storage.NewTxtStorage()
+		err = storage.Load(storagePath, s)
+		if err != nil {
+			return c, err
+		}
+		c.Storages[fi.Name()] = s
+	}
+	return c, nil
 }

@@ -15,7 +15,10 @@
 package cmd
 
 import (
+	"log"
+
 	"github.com/OpenGLAMTools/artscollection/cmd/artscollection/server"
+	"github.com/OpenGLAMTools/artscollection/collection"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -28,6 +31,8 @@ var serveCmd = &cobra.Command{
 port.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		server.ServerPort = viper.GetString("serverPort")
+		c := viper.GetStringMapString("collections")
+		server.Artscollection = loadCollections(c)
 		server.Serve()
 	},
 }
@@ -45,4 +50,16 @@ func init() {
 	// is called directly, e.g.:
 	// serveCmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
+}
+
+func loadCollections(paths map[string]string) map[string]*collection.Collection {
+	ac := make(map[string]*collection.Collection)
+	for k, cp := range paths {
+		var err error
+		ac[k], err = collection.Load(cp)
+		if err != nil {
+			log.Println(err)
+		}
+	}
+	return ac
 }

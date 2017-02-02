@@ -25,8 +25,8 @@ type Getter interface {
 type Storager interface {
 	Setter
 	Getter
-	AddField(Field) error
-	GetFields() ([]Field, error)
+	AddField(*Field) error
+	GetFields() ([]*Field, error)
 	Marshal() ([]byte, error)
 	Unmarshal([]byte) error
 }

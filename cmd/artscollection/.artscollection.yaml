@@ -1,2 +1,5 @@
 author: as27
 serverPort: :8081
+collections:
+        col2: C:\Users\Schroepfer\test\collections\col2
+        col1: C:\Users\Schroepfer\test\collections\col1
