@@ -5,7 +5,7 @@ import (
 	"testing"
 )
 
-var testFields = Fields{
+var testFields = []Field{
 	Field{
 		Key:   "4",
 		Name:  "Feld1Int",
@@ -139,5 +139,31 @@ func TestMarshal(t *testing.T) {
 		if got != tc.Input {
 			t.Errorf("Got:%#v\nExp:%#v", got, tc.Input)
 		}
+	}
+}
+
+func TestClean(t *testing.T) {
+	txt := NewTxtStorage()
+	txt.Fields = testFields
+	txt.Strings["1"] = "S1"
+	txt.Strings["2"] = "S2"
+	txt.Integers["Nokey"] = 123
+	txt.Bools["1"] = false
+	txt.Bools["2"] = false
+	txt.Clean()
+	if txt.Strings["2"] != "S2" {
+		t.Error("Entry should not be changed")
+	}
+	_, ok := txt.Strings["1"]
+	if ok {
+		t.Error("Entry should be deleted")
+	}
+	_, ok = txt.Integers["Nokey"]
+	if ok {
+		t.Error("Entry should be deleted")
+	}
+	_, ok = txt.Bools["2"]
+	if ok {
+		t.Error("Entry should be deleted")
 	}
 }

@@ -5,17 +5,26 @@ import (
 	"errors"
 )
 
+// Txt is a txt based storager
 type Txt struct {
-	Fields   Fields            `json:"fields"`
+	Fields   []Field           `json:"fields"`
 	Strings  map[string]string `json:"strings"`
 	Integers map[string]int    `json:"integers"`
 	Bools    map[string]bool   `json:"bools,omitempty"`
 }
 
+// ErrTypeNotSupported is used when the type of the interface
+// is not able to stored inside the txt.
 var ErrTypeNotSupported = errors.New("Type is not supported!")
+
+// ErrFieldNotSupported is used, when the field is not inside the txt
+// storage.
 var ErrFieldNotSupported = errors.New("Field is not supported!")
+
+// ErrWrongType is used when the given type does not match to the fieldID.
 var ErrWrongType = errors.New("Input has the wrong type!")
 
+// NewTxtStorage creates an empty Txt storage.
 func NewTxtStorage() *Txt {
 	return &Txt{
 		Strings:  make(map[string]string),
@@ -24,6 +33,7 @@ func NewTxtStorage() *Txt {
 	}
 }
 
+// Set the value of a field
 func (txt *Txt) Set(fieldID string, value interface{}) error {
 	fileDef, ok := txt.GetField(fieldID)
 	switch {
@@ -73,6 +83,7 @@ func (txt *Txt) Get(fieldID string) (interface{}, bool) {
 	return out, true
 }
 
+// GetString returns the field value if it is a string
 func (txt *Txt) GetString(fieldID string) (string, bool) {
 	if !txt.checkType(fieldID, "string") {
 		var out string
@@ -133,5 +144,29 @@ func (txt *Txt) Marshal() ([]byte, error) {
 
 // Unmarshal uses json to set all the data into the Txt instance.
 func (txt *Txt) Unmarshal(b []byte) error {
+
 	return json.Unmarshal(b, txt)
+
+}
+
+// Clean removes all values which are not defined as field.
+func (txt *Txt) Clean() {
+	for key := range txt.Strings {
+		f, ok := txt.GetField(key)
+		if ok == false || f.Type != "string" {
+			delete(txt.Strings, key)
+		}
+	}
+	for key := range txt.Integers {
+		f, ok := txt.GetField(key)
+		if ok == false || f.Type != "int" {
+			delete(txt.Integers, key)
+		}
+	}
+	for key := range txt.Bools {
+		f, ok := txt.GetField(key)
+		if ok == false || f.Type != "bool" {
+			delete(txt.Bools, key)
+		}
+	}
 }

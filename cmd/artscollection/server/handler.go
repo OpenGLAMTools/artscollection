@@ -1,9 +1,10 @@
 package server
 
 import (
+	"fmt"
 	"io/ioutil"
-	"log"
 	"net/http"
+	"os"
 
 	"github.com/OpenGLAMTools/artscollection/collection"
 	"github.com/OpenGLAMTools/artscollection/storage"
@@ -12,10 +13,12 @@ import (
 
 var Artscollection map[string]*collection.Collection
 
+var Storager = storage.NewTxtStorage()
+
 func collectionHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
 	b, err := coll.Marshal()
-	errorLog(err)
+	errorLog(err, "collectionHandler: Error Marshaling coll")
 	writeBytes(b, w)
 }
 
@@ -29,7 +32,7 @@ func itemHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	b, err := item.Marshal()
-	errorLog(err)
+	errorLog(err, "itemHandler: error at item.Marshal")
 	writeBytes(b, w)
 }
 
@@ -38,12 +41,16 @@ func postItemHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	itemID := vars["item"]
 	rbody, err := ioutil.ReadAll(r.Body)
-	errorLog(err)
-	var item storage.Storager
+	errorLog(err, "postItemHandler: Error reading body")
+	var item = Storager
 	err = item.Unmarshal(rbody)
-	errorLog(err)
+	fmt.Printf("<<%#v>>\n", item)
+	if err != nil {
+		errorLog(err, "postItemHandler: Error unmarshaling body")
+		return
+	}
 	err = coll.WriteItem(itemID, item)
-	errorLog(err)
+	errorLog(err, "postItemHandler: Error WriteItem")
 }
 
 func getCollection(r *http.Request) *collection.Collection {
@@ -55,11 +62,11 @@ func getCollection(r *http.Request) *collection.Collection {
 
 func writeBytes(b []byte, w http.ResponseWriter) {
 	_, err := w.Write(b)
-	errorLog(err)
+	errorLog(err, "Error writeBytes")
 }
 
-func errorLog(err error) {
+func errorLog(err error, s string) {
 	if err != nil {
-		log.Println(err)
+		fmt.Fprintf(os.Stderr, "%s:%v", s, err)
 	}
 }

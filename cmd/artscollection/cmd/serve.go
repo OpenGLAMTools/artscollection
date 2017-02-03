@@ -15,7 +15,8 @@
 package cmd
 
 import (
-	"log"
+	"fmt"
+	"os"
 
 	"github.com/OpenGLAMTools/artscollection/cmd/artscollection/server"
 	"github.com/OpenGLAMTools/artscollection/collection"
@@ -58,8 +59,14 @@ func loadCollections(paths map[string]string) map[string]*collection.Collection 
 		var err error
 		ac[k], err = collection.Load(cp)
 		if err != nil {
-			log.Println(err)
+			errorLog(err, "loadCollection error:")
 		}
 	}
 	return ac
+}
+
+func errorLog(err error, s string) {
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%s:%v", s, err)
+	}
 }
