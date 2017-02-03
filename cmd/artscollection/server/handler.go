@@ -17,6 +17,8 @@ var Storager = storage.NewTxtStorage()
 
 func collectionHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
+	err := coll.Reload()
+	errorLog(err, "collectionHandler: Error reloading collection")
 	b, err := coll.Marshal()
 	errorLog(err, "collectionHandler: Error Marshaling coll")
 	writeBytes(b, w)
@@ -24,6 +26,7 @@ func collectionHandler(w http.ResponseWriter, r *http.Request) {
 
 func itemHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
+	coll.Reload()
 	vars := mux.Vars(r)
 	itemID := vars["item"]
 	item, ok := coll.GetItem(itemID)
