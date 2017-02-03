@@ -44,7 +44,6 @@ func postItemHandler(w http.ResponseWriter, r *http.Request) {
 	errorLog(err, "postItemHandler: Error reading body")
 	var item = Storager
 	err = item.Unmarshal(rbody)
-	fmt.Printf("<<%#v>>\n", item)
 	if err != nil {
 		errorLog(err, "postItemHandler: Error unmarshaling body")
 		return

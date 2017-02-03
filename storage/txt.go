@@ -144,9 +144,12 @@ func (txt *Txt) Marshal() ([]byte, error) {
 
 // Unmarshal uses json to set all the data into the Txt instance.
 func (txt *Txt) Unmarshal(b []byte) error {
-
-	return json.Unmarshal(b, txt)
-
+	err := json.Unmarshal(b, txt)
+	if err != nil {
+		return err
+	}
+	txt.Clean()
+	return nil
 }
 
 // Clean removes all values which are not defined as field.
