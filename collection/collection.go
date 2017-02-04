@@ -18,26 +18,26 @@ var FieldsConfFile = "conf.yaml"
 // default for new storages.
 type Collection struct {
 	Fields   storage.Fields
-	Storages map[string]storage.Storager
-	Indexes  map[string]map[string]storage.Storager
+	Storages map[string]*storage.Txt
+	Indexes  map[string]map[string]*storage.Txt
 	fpath    string
 }
 
 // NewCollection returns an empty collection
 func NewCollection(fpath string) *Collection {
 	return &Collection{
-		Storages: make(map[string]storage.Storager),
+		Storages: make(map[string]*storage.Txt),
 		fpath:    fpath,
 	}
 }
 
 // GetItem returns a storage from the collection
-func (c *Collection) GetItem(ID string) (storage.Storager, bool) {
+func (c *Collection) GetItem(ID string) (*storage.Txt, bool) {
 	i, ok := c.Storages[ID]
 	return i, ok
 }
 
-func (c *Collection) WriteItem(ID string, s storage.Storager) error {
+func (c *Collection) WriteItem(ID string, s *storage.Txt) error {
 	itemPath := filepath.Join(
 		c.Path(),
 		ID,

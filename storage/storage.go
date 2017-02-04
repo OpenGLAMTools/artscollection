@@ -23,7 +23,7 @@ type Getter interface {
 }
 
 // Storager combines the interfaces
-type Storager interface {
+type StoragerS interface {
 	Setter
 	Getter
 	//AddField(Field) error
@@ -33,7 +33,7 @@ type Storager interface {
 }
 
 // Load loads data from a file into a Storager
-func Load(filename string, s Storager) error {
+func Load(filename string, s *Txt) error {
 	// Check if file exists
 	_, err := os.Stat(filename)
 	if os.IsNotExist(err) {
@@ -51,7 +51,7 @@ func Load(filename string, s Storager) error {
 }
 
 // Write writes a Storager to a file
-func Write(txt Storager, filename string) error {
+func Write(txt *Txt, filename string) error {
 	// ensure dir
 	os.MkdirAll(filepath.Dir(filename), 0777)
 	b, err := txt.Marshal()
