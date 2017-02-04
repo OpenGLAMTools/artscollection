@@ -7,11 +7,19 @@ import (
 
 // Txt is a txt based storager
 type Txt struct {
-	Fields   []Field           `json:"fields"`
-	Strings  map[string]string `json:"strings"`
-	Integers map[string]int    `json:"integers"`
-	Bools    map[string]bool   `json:"bools,omitempty"`
+	Fields       []Field             `json:"fields"`
+	Strings      map[string]string   `json:"strings"`
+	Integers     map[string]int      `json:"integers"`
+	Bools        map[string]bool     `json:"bools,omitempty"`
+	SliceStrings map[string][]string `json:"sclicestrings"`
 }
+
+const (
+	TypeString      = "string"
+	TypeInt         = "int"
+	TypeBool        = "bool"
+	TypeSliceString = "SliceString"
+)
 
 // ErrTypeNotSupported is used when the type of the interface
 // is not able to stored inside the txt.
@@ -27,9 +35,10 @@ var ErrWrongType = errors.New("Input has the wrong type!")
 // NewTxtStorage creates an empty Txt storage.
 func NewTxtStorage() *Txt {
 	return &Txt{
-		Strings:  make(map[string]string),
-		Integers: make(map[string]int),
-		Bools:    make(map[string]bool),
+		Strings:      make(map[string]string),
+		Integers:     make(map[string]int),
+		Bools:        make(map[string]bool),
+		SliceStrings: make(map[string][]string),
 	}
 }
 
@@ -42,20 +51,25 @@ func (txt *Txt) Set(fieldID string, value interface{}) error {
 	}
 	switch t := value.(type) {
 	case string:
-		if fileDef.Type != "string" {
+		if fileDef.Type != TypeString {
 			return ErrWrongType
 		}
 		txt.Strings[fieldID] = t
 	case int:
-		if fileDef.Type != "int" {
+		if fileDef.Type != TypeInt {
 			return ErrWrongType
 		}
 		txt.Integers[fieldID] = t
 	case bool:
-		if fileDef.Type != "bool" {
+		if fileDef.Type != TypeBool {
 			return ErrWrongType
 		}
 		txt.Bools[fieldID] = t
+	case []string:
+		if fileDef.Type != TypeSliceString {
+			return ErrWrongType
+		}
+		txt.SliceStrings[fieldID] = t
 	default:
 		return ErrTypeNotSupported
 	}
@@ -71,12 +85,14 @@ func (txt *Txt) Get(fieldID string) (interface{}, bool) {
 		return out, false
 	}
 	switch t {
-	case "string":
+	case TypeString:
 		out = txt.Strings[fieldID]
-	case "int":
+	case TypeInt:
 		out = txt.Integers[fieldID]
-	case "bool":
+	case TypeBool:
 		out = txt.Bools[fieldID]
+	case TypeSliceString:
+		out = txt.SliceStrings[fieldID]
 	default:
 		return out, false
 	}
@@ -85,7 +101,7 @@ func (txt *Txt) Get(fieldID string) (interface{}, bool) {
 
 // GetString returns the field value if it is a string
 func (txt *Txt) GetString(fieldID string) (string, bool) {
-	if !txt.checkType(fieldID, "string") {
+	if !txt.checkType(fieldID, TypeString) {
 		var out string
 		return out, false
 	}
@@ -93,7 +109,7 @@ func (txt *Txt) GetString(fieldID string) (string, bool) {
 }
 
 func (txt *Txt) GetInt(fieldID string) (int, bool) {
-	if !txt.checkType(fieldID, "int") {
+	if !txt.checkType(fieldID, TypeInt) {
 		var out int
 		return out, false
 	}
@@ -101,11 +117,19 @@ func (txt *Txt) GetInt(fieldID string) (int, bool) {
 }
 
 func (txt *Txt) GetBool(fieldID string) (bool, bool) {
-	if !txt.checkType(fieldID, "bool") {
+	if !txt.checkType(fieldID, TypeBool) {
 		var out bool
 		return out, false
 	}
 	return txt.Bools[fieldID], true
+}
+
+func (txt *Txt) GetSliceString(fieldID string) ([]string, bool) {
+	if !txt.checkType(fieldID, TypeSliceString) {
+		var out []string
+		return out, false
+	}
+	return txt.SliceStrings[fieldID], true
 }
 
 func (txt *Txt) checkType(fieldID, fieldType string) bool {
@@ -156,20 +180,26 @@ func (txt *Txt) Unmarshal(b []byte) error {
 func (txt *Txt) Clean() {
 	for key := range txt.Strings {
 		f, ok := txt.GetField(key)
-		if ok == false || f.Type != "string" {
+		if ok == false || f.Type != TypeString {
 			delete(txt.Strings, key)
 		}
 	}
 	for key := range txt.Integers {
 		f, ok := txt.GetField(key)
-		if ok == false || f.Type != "int" {
+		if ok == false || f.Type != TypeInt {
 			delete(txt.Integers, key)
 		}
 	}
 	for key := range txt.Bools {
 		f, ok := txt.GetField(key)
-		if ok == false || f.Type != "bool" {
+		if ok == false || f.Type != TypeBool {
 			delete(txt.Bools, key)
+		}
+	}
+	for key := range txt.SliceStrings {
+		f, ok := txt.GetField(key)
+		if ok == false || f.Type != TypeSliceString {
+			delete(txt.SliceStrings, key)
 		}
 	}
 }

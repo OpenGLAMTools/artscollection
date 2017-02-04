@@ -1,6 +1,7 @@
 package storage
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -34,6 +35,13 @@ var testFields = []Field{
 		Group: "",
 		Order: 1,
 	},
+	Field{
+		Key:   "5",
+		Name:  "Feld1",
+		Type:  TypeSliceString,
+		Group: "",
+		Order: 1,
+	},
 }
 
 /*
@@ -52,6 +60,7 @@ func TestSet(t *testing.T) {
 		{"12345", "string value", ErrFieldNotSupported},
 		{"4", "string value", ErrWrongType},
 		{"4", 4, nil},
+		{"5", []string{"a", "b", "c"}, nil},
 	}
 
 	for _, tc := range testCases {
@@ -59,6 +68,7 @@ func TestSet(t *testing.T) {
 		txt.Fields = testFields
 		err := txt.Set(tc.Key, tc.Input)
 		if err != tc.Error {
+			fmt.Printf("%v", tc.Input)
 			t.Errorf("Wrong Error!\nExp:%v\nGot:%v\n", tc.Error, err)
 		}
 	}
