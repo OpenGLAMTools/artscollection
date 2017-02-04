@@ -3,6 +3,9 @@ package storage
 import (
 	"encoding/json"
 	"errors"
+	"io/ioutil"
+	"os"
+	"path/filepath"
 )
 
 // Txt is a txt based storager
@@ -202,4 +205,33 @@ func (txt *Txt) Clean() {
 			delete(txt.SliceStrings, key)
 		}
 	}
+}
+
+// LoadTxt loads data from a file into a Storager
+func LoadTxt(filename string, txt *Txt) error {
+	// Check if file exists
+	_, err := os.Stat(filename)
+	if os.IsNotExist(err) {
+		return nil
+	}
+	b, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+	err = txt.Unmarshal(b)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// WriteTxt writes a Storager to a file
+func WriteTxt(txt *Txt, filename string) error {
+	// ensure dir
+	os.MkdirAll(filepath.Dir(filename), 0777)
+	b, err := txt.Marshal()
+	if err != nil {
+		return err
+	}
+	return ioutil.WriteFile(filename, b, 0777)
 }
