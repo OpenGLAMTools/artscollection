@@ -19,6 +19,7 @@ type Getter interface {
 	GetInt(fieldID string) (int, bool)
 	GetString(fieldID string) (string, bool)
 	GetBool(fieldID string) (bool, bool)
+	//GetTaxonomyTerms(taxonomy string) []string
 }
 
 // Storager combines the interfaces

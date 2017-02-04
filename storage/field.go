@@ -21,6 +21,8 @@ type Field struct {
 	Group string `yaml:"group"`
 	// Items are ordered inside the group.
 	Order int `yaml:"order"`
+	// Index specifies if that field should be indexed.
+	Index bool `yaml:"index"`
 	// If not nil that values are used for a dropdown list
 	//Select []string
 }

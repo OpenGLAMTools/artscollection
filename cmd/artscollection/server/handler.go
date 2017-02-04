@@ -24,6 +24,15 @@ func collectionHandler(w http.ResponseWriter, r *http.Request) {
 	writeBytes(b, w)
 }
 
+func taxonomyHandler(w http.ResponseWriter, r *http.Request) {
+	coll := getCollection(r)
+	err := coll.Reload()
+	errorLog(err, "collectionHandler: Error reloading collection")
+	b, err := coll.Marshal()
+	errorLog(err, "collectionHandler: Error Marshaling coll")
+	writeBytes(b, w)
+}
+
 func itemHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
 	coll.Reload()

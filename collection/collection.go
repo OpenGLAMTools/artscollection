@@ -20,6 +20,7 @@ var FieldsConfFile = "conf.yaml"
 type Collection struct {
 	Fields   storage.Fields
 	Storages map[string]storage.Storager
+	Indexes  map[string]map[string]storage.Storager
 	fpath    string
 }
 
