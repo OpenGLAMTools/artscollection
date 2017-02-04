@@ -57,7 +57,7 @@ func loadCollections(paths map[string]string) map[string]*collection.Collection 
 	ac := make(map[string]*collection.Collection)
 	for k, cp := range paths {
 		var err error
-		ac[k], err = collection.Load(cp)
+		ac[k], err = collection.LoadTxt(cp)
 		if err != nil {
 			errorLog(err, "loadCollection error:")
 		}

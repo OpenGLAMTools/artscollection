@@ -2,7 +2,6 @@ package collection
 
 import (
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"path/filepath"
 
@@ -59,18 +58,18 @@ func (c *Collection) Path() string {
 
 // Reload the collection
 func (c *Collection) Reload() error {
-	cnew, err := Load(c.fpath)
+	cnew, err := LoadTxt(c.fpath)
 	if err != nil {
 		return err
 	}
 
 	*c = *cnew
-	fmt.Printf("%v\n\n", cnew)
+	//fmt.Printf("%v\n\n", cnew)
 	return nil
 }
 
-// Load the collection from a given path
-func Load(fpath string) (*Collection, error) {
+// LoadTxt the collection from a given path
+func LoadTxt(fpath string) (*Collection, error) {
 	c := NewCollection(fpath)
 	confFile := filepath.Join(
 		fpath,
