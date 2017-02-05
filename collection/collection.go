@@ -17,17 +17,24 @@ var FieldsConfFile = "conf.yaml"
 // Collection defines the fields for a storage that fields are used as
 // default for new storages.
 type Collection struct {
-	Fields   storage.Fields
+	// Default fields for all the storages of that collection
+	Fields []storage.Field
+	// The data storage
 	Storages map[string]*storage.Txt
-	Indexes  map[string]map[string]*storage.Txt
-	fpath    string
+	// Index map for the SliceString values. The logik of the keys is
+	// map[Field.Key]map[SliceStringValue]
+	// SliceStrings are used to support taxonomy like for example tags
+	SliceStringIndex map[string]map[string][]*storage.Txt
+	// The filepath which is the root folder of the collection.
+	fpath string
 }
 
 // NewCollection returns an empty collection
 func NewCollection(fpath string) *Collection {
 	return &Collection{
-		Storages: make(map[string]*storage.Txt),
-		fpath:    fpath,
+		Storages:         make(map[string]*storage.Txt),
+		SliceStringIndex: make(map[string]map[string][]*storage.Txt),
+		fpath:            fpath,
 	}
 }
 
@@ -43,7 +50,7 @@ func (c *Collection) WriteItem(ID string, s *storage.Txt) error {
 		ID,
 		StorageFile,
 	)
-	return storage.Write(s, itemPath)
+	return storage.WriteTxt(s, itemPath)
 }
 
 // Marshal returns the whole collection as json object
@@ -66,6 +73,26 @@ func (c *Collection) Reload() error {
 	*c = *cnew
 	//fmt.Printf("%v\n\n", cnew)
 	return nil
+}
+
+// MakeSliceStringIndex creates the index for all the SliceString values
+func (c *Collection) MakeSliceStringIndex() {
+	for _, f := range c.Fields {
+		if f.Type == storage.TypeSliceString {
+			// If map is not allocated for a field
+			if c.SliceStringIndex[f.ID()] == nil {
+				c.SliceStringIndex[f.ID()] = make(map[string][]*storage.Txt)
+			}
+			for _, s := range c.Storages {
+				vals, ok := s.GetSliceString(f.ID())
+				if ok {
+					for _, v := range vals {
+						c.SliceStringIndex[f.ID()][v] = append(c.SliceStringIndex[f.ID()][v], s)
+					}
+				}
+			}
+		}
+	}
 }
 
 // LoadTxt the collection from a given path
@@ -94,7 +121,7 @@ func LoadTxt(fpath string) (*Collection, error) {
 			StorageFile,
 		)
 		s := storage.NewTxtStorage()
-		err = storage.Load(storagePath, s)
+		err = storage.LoadTxt(storagePath, s)
 		if err != nil {
 			return c, err
 		}
