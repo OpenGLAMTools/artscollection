@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/as27/golib/js/semanticjs227"
 	"github.com/gorilla/mux"
 )
 
@@ -16,6 +17,7 @@ func Serve() {
 	router.HandleFunc("/collection/{collection}/taxonomy/{term}", taxonomyHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", itemHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", postItemHandler).Methods("POST")
+	router.HandleFunc("/lib/js/semantic.js", semanticjs227.Handler).Methods("GET")
 	fmt.Println("Starting server", ServerPort)
 	err := http.ListenAndServe(ServerPort, router)
 	if err != nil {

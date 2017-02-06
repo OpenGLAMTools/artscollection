@@ -130,6 +130,6 @@ func LoadTxt(fpath string) (*Collection, error) {
 		}
 		c.Storages[fi.Name()] = s
 	}
-
+	c.MakeSliceStringIndex()
 	return c, nil
 }
