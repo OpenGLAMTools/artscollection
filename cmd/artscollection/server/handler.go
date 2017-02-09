@@ -5,6 +5,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"os"
+	"path/filepath"
 
 	"github.com/OpenGLAMTools/artscollection/collection"
 	"github.com/OpenGLAMTools/artscollection/storage"
@@ -62,6 +63,20 @@ func postItemHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	err = coll.WriteItem(itemID, item)
 	errorLog(err, "postItemHandler: Error WriteItem")
+}
+
+func pageHandler(w http.ResponseWriter, r *http.Request) {
+	vars := mux.Vars(r)
+	p := vars["page"]
+	fp := filepath.Join("server", "pages", p)
+	b, err := ioutil.ReadFile(fp)
+	if err != nil {
+		w.WriteHeader(http.StatusNotFound)
+		errorLog(err, "pageHandler: Error ReadFile():")
+		// Send 404 and abort, when file could not read
+		return
+	}
+	writeBytes(b, w)
 }
 
 func getCollection(r *http.Request) *collection.Collection {
