@@ -1,4 +1,31 @@
-const Foo = { template: '<div>foo</div>' }
+const Collections = {
+    template: `<a v-on:click="getData">load</a><input v-model="a">`,
+    data: () => {
+        this.getData();
+        return {
+            a: "asd"
+        }
+    },
+    ready: () =>{
+        this.getData();
+    },
+    props: ['$http'],
+    methods: {
+        getData: () => {
+            Vue.http.get("/collection").then(
+                (res) => {
+                    console.log(res);
+                }
+            )
+        }
+    }
+}
+
+
+const Foo = { template: `<div>foo:<br>
+<router-link to="/foo/foo">foo foo</router-link>
+<router-view></router-view></div>` }
+const Foofoo = { template: '<div>foooo</div>' }
 const Bar = { template: '<div>bar</div>' }
 
 // 2. Define some routes
@@ -7,8 +34,11 @@ const Bar = { template: '<div>bar</div>' }
 // Vue.extend(), or just a component options object.
 // We'll talk about nested routes later.
 const routes = [
-  { path: '/foo', component: Foo },
-  { path: '/bar', component: Bar }
+  { path: '/foo', 
+  component: Foo,
+  children:[{ path: '/foo/foo', component: Foofoo }] },
+  { path: '/bar', component: Bar },
+   { path: '/collection', component: Collections }
 ]
 
 // 3. Create the router instance and pass the `routes` option

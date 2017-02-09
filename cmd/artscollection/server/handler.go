@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -16,6 +17,11 @@ var Artscollection map[string]*collection.Collection
 
 var Storager = storage.NewTxtStorage()
 
+func allCollectionsHandler(w http.ResponseWriter, r *http.Request) {
+	b, err := json.Marshal(Artscollection)
+	errorLog(err, "allCollectionsHandler: Marshal:")
+	writeBytes(b, w)
+}
 func collectionHandler(w http.ResponseWriter, r *http.Request) {
 	coll := getCollection(r)
 	err := coll.Reload()

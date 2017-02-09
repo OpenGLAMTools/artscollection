@@ -18,6 +18,7 @@ var ServerPort = ":8081"
 
 func Serve() {
 	router := mux.NewRouter()
+	router.HandleFunc("/collection", allCollectionsHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}", collectionHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/taxonomy/{term}", taxonomyHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", itemHandler).Methods("GET")
