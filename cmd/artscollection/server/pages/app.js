@@ -1,8 +1,7 @@
-const Home = Vue.component('home',{
-    data : function () {
+const Home = Vue.component('home', {
+    data: function () {
         return {
-            a: "1",
-            collections : {}
+            collections: {}
         }
     },
     template: `
@@ -27,7 +26,7 @@ const Home = Vue.component('home',{
     }
 })
 
-const Collection = Vue.component('collection',{
+const Collection = Vue.component('collection', {
     template: `<div>
     <h2>Collection</h2>
     <ul>
@@ -37,33 +36,58 @@ const Collection = Vue.component('collection',{
         </router-link>
     </li>
     </ul>
-    {{ cid }}
     <router-view></router-view></div>`,
-    data: function (){
+    data: function () {
         return {
-            items: {Storages: null}
+            items: { Storages: null }
         }
     },
     methods: {
-        fetchData: function (){
-            this.$http.get('/collection/'+this.cid).then(
-            (res) => {
-                this.items = res.body;
-            }
-        );
+        fetchData: function () {
+            this.$http.get('/collection/' + this.cid).then(
+                (res) => {
+                    this.items = res.body;
+                }
+            );
         }
     },
-    created: function (){
+    created: function () {
         this.fetchData()
     },
-     watch: {
+    watch: {
         '$route': 'fetchData'
     },
     props: ['cid']
 })
 
-const Item =  Vue.component('collection',{
-    template: `<div><h3>Item</h3><router-view></router-view></div>`
+const Item = Vue.component('item', {
+    template: `<div><h3>Item</h3>
+    <h4>{{ iid }}</h4>
+    <ul>
+    <li v-for="f in item.fields">{{f.Name}}</li>
+    </ul>
+    </div>`,
+    data: function () {
+        return {
+            item: {fields:[]}
+        }
+    },
+    methods: {
+        fetchData: function () {
+            this.$http.get('/collection/' + this.cid + '/' + this.iid).then(
+                (res) => {
+                    this.item = res.body;
+                }
+            );
+        }
+    },
+    created: function () {
+        this.fetchData()
+    },
+    watch: {
+        '$route': 'fetchData'
+    },
+    props: ['cid', 'iid']
 })
 
 const routes = [
@@ -91,10 +115,10 @@ const routes = [
 
 
 const router = new VueRouter({
-  routes: routes
+    routes: routes
 })
 
 
 const app = new Vue({
-  router
+    router
 }).$mount('#app')
