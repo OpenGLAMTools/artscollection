@@ -99,6 +99,6 @@ func writeBytes(b []byte, w http.ResponseWriter) {
 
 func errorLog(err error, s string) {
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "%s:%v", s, err)
+		fmt.Fprintf(os.Stderr, "%s:%v\n", s, err)
 	}
 }

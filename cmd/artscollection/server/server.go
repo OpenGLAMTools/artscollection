@@ -8,7 +8,7 @@ import (
 	"github.com/as27/golib/css/semanticcss227"
 	"github.com/as27/golib/js/jquerymin"
 	"github.com/as27/golib/js/semanticjs227"
-	"github.com/as27/golib/js/vuejsmin"
+	"github.com/as27/golib/js/vuejsdev"
 	"github.com/as27/golib/js/vueresourcemin"
 	"github.com/as27/golib/js/vueroutermin"
 	"github.com/gorilla/mux"
@@ -26,7 +26,7 @@ func Serve() {
 	router.HandleFunc("/page/{page}", pageHandler).Methods("GET")
 	router.HandleFunc("/lib/css/semantic.min.css", semanticcss227.Handler).Methods("GET")
 
-	router.HandleFunc("/lib/js/vue.min.js", vuejsmin.Handler).Methods("GET")
+	router.HandleFunc("/lib/js/vue.min.js", vuejsdev.Handler).Methods("GET")
 	router.HandleFunc("/lib/js/vue-resource.min.js", vueresourcemin.Handler).Methods("GET")
 	router.HandleFunc("/lib/js/vue-router.min.js", vueroutermin.Handler).Methods("GET")
 	router.HandleFunc("/lib/js/jquery.min.js", jquerymin.Handler).Methods("GET")
