@@ -11,17 +11,17 @@ import (
 // Txt is a txt based storager
 type Txt struct {
 	Fields       []Field             `json:"fields"`
-	Strings      map[string]string   `json:"strings"`
-	Integers     map[string]int      `json:"integers"`
-	Bools        map[string]bool     `json:"bools,omitempty"`
-	SliceStrings map[string][]string `json:"sclicestrings"`
+	Strings      map[string]string   `json:"string"`
+	Integers     map[string]int      `json:"int"`
+	Bools        map[string]bool     `json:"bool"`
+	SliceStrings map[string][]string `json:"list"`
 }
 
 const (
 	TypeString      = "string"
 	TypeInt         = "int"
 	TypeBool        = "bool"
-	TypeSliceString = "SliceString"
+	TypeSliceString = "list"
 )
 
 // ErrTypeNotSupported is used when the type of the interface

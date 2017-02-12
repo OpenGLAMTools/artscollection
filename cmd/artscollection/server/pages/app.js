@@ -1,3 +1,10 @@
+const RenderField = Vue.component('render-field',{
+    template: `<div>{{ field.Name }}</div>`,
+    props: {
+        field: Object,
+        storage: Object
+    }
+})
 const Home = Vue.component('home', {
     data: function () {
         return {
@@ -64,7 +71,10 @@ const Item = Vue.component('item', {
     template: `<div><h3>Item</h3>
     <h4>{{ iid }}</h4>
     <ul>
-    <li v-for="f in item.fields">{{f.Name}}</li>
+    <li v-for="f in item.fields">
+    {{f.Name}}: <input v-model="item[f.Type][f.Key]">
+    <render-field :field=f :storage=item[f.Type] ></render-field>
+    </li>
     </ul>
     </div>`,
     data: function () {
