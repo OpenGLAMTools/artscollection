@@ -1,5 +1,57 @@
+const RenderString = Vue.component('render-string',{
+    template: `<div>{{ field.Name }}: <input v-model="storage[field.Key]"></div>`,
+    props: {
+        storage: Object,
+        field: Object
+    }
+})
+const RenderBool = Vue.component('render-bool',{
+    template: `<div>{{ field.Name }}: <input type="checkbox" v-model="storage[field.Key]"></div>`,
+    props: {
+        storage: Object,
+        field: Object
+    }
+})
+const RenderList = Vue.component('render-bool',{
+    template: `<div>{{ field.Name }}: 
+    <ul>
+    <li v-for="(value,key) in storage[field.Key]"><input v-model="storage[field.Key][key]"></li>
+    <li @click="addTag">Add Tag</li>
+    </ul>
+    </div>`,
+    props: {
+        storage: Object,
+        field: Object
+    },
+    created: function (){
+        if (this.storage[this.field.Key] == null ){
+            this.$set(this.storage, this.field.Key, [])
+            }
+    },
+    methods: {
+        addTag: function (){
+            if (this.storage[this.field.Key] == null ){
+                this.storage[this.field.Key] = [];
+            }
+            this.storage[this.field.Key].push("");
+        }
+    }
+})
 const RenderField = Vue.component('render-field',{
-    template: `<div>{{ field.Name }}</div>`,
+    template: `<div>
+    <component :is=field.Type :storage=storage :field=field></component></div>`,
+    computed: {
+        fieldType: function(){
+            return this.field.Type
+        }
+    },
+    components: {
+        string: RenderString,
+        int: RenderString,
+        bool: RenderBool,
+        list: RenderList
+    },
+    
     props: {
         field: Object,
         storage: Object
@@ -72,7 +124,6 @@ const Item = Vue.component('item', {
     <h4>{{ iid }}</h4>
     <ul>
     <li v-for="f in item.fields">
-    {{f.Name}}: <input v-model="item[f.Type][f.Key]">
     <render-field :field=f :storage=item[f.Type] ></render-field>
     </li>
     </ul>
