@@ -1,5 +1,22 @@
 const RenderString = Vue.component('render-string',{
     template: `<div>{{ field.Name }}: <input v-model="storage[field.Key]"></div>`,
+    created: function (){
+        if (this.storage[this.field.Key] == null ){
+            this.$set(this.storage, this.field.Key, "")
+            }
+    },
+    props: {
+        storage: Object,
+        field: Object
+    }
+})
+const RenderInteger = Vue.component('render-integer',{
+    template: `<div>{{ field.Name }}: <input type="number" v-model="storage[field.Key]"></div>`,
+    created: function (){
+        if (this.storage[this.field.Key] == null ){
+            this.$set(this.storage, this.field.Key, 0)
+            }
+    },
     props: {
         storage: Object,
         field: Object
@@ -7,6 +24,11 @@ const RenderString = Vue.component('render-string',{
 })
 const RenderBool = Vue.component('render-bool',{
     template: `<div>{{ field.Name }}: <input type="checkbox" v-model="storage[field.Key]"></div>`,
+    created: function (){
+        if (this.storage[this.field.Key] == null ){
+            this.$set(this.storage, this.field.Key, false)
+            }
+    },
     props: {
         storage: Object,
         field: Object
@@ -47,7 +69,7 @@ const RenderField = Vue.component('render-field',{
     },
     components: {
         string: RenderString,
-        int: RenderString,
+        int: RenderInteger,
         bool: RenderBool,
         list: RenderList
     },
@@ -127,6 +149,7 @@ const Item = Vue.component('item', {
     <render-field :field=f :storage=item[f.Type] ></render-field>
     </li>
     </ul>
+    <div @click="saveData">Save Data</div>
     </div>`,
     data: function () {
         return {
@@ -140,6 +163,9 @@ const Item = Vue.component('item', {
                     this.item = res.body;
                 }
             );
+        },
+        saveData: function () {
+            this.$http.post('/collection/' + this.cid + '/' + this.iid,this.item);
         }
     },
     created: function () {
