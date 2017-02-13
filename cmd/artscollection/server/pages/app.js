@@ -1,5 +1,7 @@
 const RenderString = Vue.component('render-string',{
-    template: `<div>{{ field.Name }}: <input v-model="storage[field.Key]"></div>`,
+    template: `<div class="field">
+        <label>{{ field.Name }}</label> 
+        <input v-model="storage[field.Key]"></div>`,
     created: function (){
         if (this.storage[this.field.Key] == null ){
             this.$set(this.storage, this.field.Key, "")
@@ -11,7 +13,9 @@ const RenderString = Vue.component('render-string',{
     }
 })
 const RenderInteger = Vue.component('render-integer',{
-    template: `<div>{{ field.Name }}: <input type="number" v-model="storage[field.Key]"></div>`,
+    template: `<div class="field">
+    <label>{{ field.Name }}</label> 
+    <input type="number" v-model="storage[field.Key]"></div>`,
     created: function (){
         if (this.storage[this.field.Key] == null ){
             this.$set(this.storage, this.field.Key, 0)
@@ -23,7 +27,9 @@ const RenderInteger = Vue.component('render-integer',{
     }
 })
 const RenderBool = Vue.component('render-bool',{
-    template: `<div>{{ field.Name }}: <input type="checkbox" v-model="storage[field.Key]"></div>`,
+    template: `<div class="field">
+    <label>{{ field.Name }}</label>
+     <input type="checkbox" v-model="storage[field.Key]"></div>`,
     created: function (){
         if (this.storage[this.field.Key] == null ){
             this.$set(this.storage, this.field.Key, false)
@@ -86,17 +92,23 @@ const Home = Vue.component('home', {
         }
     },
     template: `
-    <div>
-    <h1>Home</h1>
-    <ul>
-        <li v-for="(col, key) in collections">
-        <router-link :to="{ name: 'collection', params: { cid: key}}">
-        {{key}}
-        </router-link>
-        </li>
-    </ul>
-    <router-view></router-view>
-    </div>`,
+    <div class="ui grid">
+        <div class="five wide column">
+            <div class="ui vertical pointing menu">
+            <span  v-for="(col, key) in collections">
+                <router-link class="item" :to="{ name: 'collection', params: { cid: key}}">
+                {{key}}
+                </router-link>
+            </span>
+            </div>
+             
+        </div>
+        <div class="ten wide column">
+            <router-view></router-view>
+        </div>  
+     
+    </div>
+    `,
     mounted: function () {
         this.$http.get('/collection').then(
             (res) => {
@@ -108,16 +120,23 @@ const Home = Vue.component('home', {
 })
 
 const Collection = Vue.component('collection', {
-    template: `<div>
-    <h2>Collection</h2>
-    <ul>
-    <li v-for="(item, key) in items.Storages">
-    <router-link :to="{ name: 'item', params: { iid: key}}">
-        {{key}}
-        </router-link>
-    </li>
-    </ul>
-    <router-view></router-view></div>`,
+    template: `
+    <div class="ui grid">
+        <div class="six wide column">
+            <h2>Collection</h2>
+            <ul>
+            <li v-for="(item, key) in items.Storages">
+            <router-link :to="{ name: 'item', params: { iid: key}}">
+                {{key}}
+                </router-link>
+            </li>
+            </ul>
+       </div>
+       <div class="six wide column">
+            <router-view></router-view>
+        </div>
+    </div>
+    `,
     data: function () {
         return {
             items: { Storages: null }
@@ -142,14 +161,17 @@ const Collection = Vue.component('collection', {
 })
 
 const Item = Vue.component('item', {
-    template: `<div><h3>Item</h3>
-    <h4>{{ iid }}</h4>
-    <ul>
-    <li v-for="f in item.fields">
-    <render-field :field=f :storage=item[f.Type] ></render-field>
-    </li>
-    </ul>
-    <div @click="saveData">Save Data</div>
+    template: `
+    <div>
+    <form class="ui form">
+        <h3>{{ iid }}</h3>
+        
+        <div v-for="f in item.fields">
+        <render-field :field=f :storage=item[f.Type] ></render-field>
+        </div>
+        
+        <button class="ui button" @click="saveData">Save Data</button>
+    </form>
     </div>`,
     data: function () {
         return {

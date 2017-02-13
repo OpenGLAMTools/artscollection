@@ -2,33 +2,35 @@
 
 <head>
 
-    <link rel="stylesheet" type="text/css" href="/lib/css/semantic.min.css">
-    <script src="/lib/js/vue.min.js"></script>
-    <script src="/lib/js/vue-resource.min.js"></script>
-    <script src="/lib/js/vue-router.min.js"></script>
-    <script src="/lib/js/jquery.min.js"></script>
-    <script src="/lib/js/semantic.js"></script>
+  <link rel="stylesheet" type="text/css" href="/lib/css/semantic.min.css">
+  <script src="/lib/js/vue.min.js"></script>
+  <script src="/lib/js/vue-resource.min.js"></script>
+  <script src="/lib/js/vue-router.min.js"></script>
+  <script src="/lib/js/jquery.min.js"></script>
+  <script src="/lib/js/semantic.js"></script>
 </head>
 
 <body>
 
 
-<div id="app">
-  <h1>My Artscollection</h1>
-  <p>
-    <!-- use router-link component for navigation. -->
-    <!-- specify the link by passing the `to` prop. -->
-    <!-- <router-link> will be rendered as an `<a>` tag by default -->
-      <router-link to="/">Home</router-link><br>
-    <router-link to="/col1">Go to Col1</router-link><br>
-    <router-link to="/col1/bild1">Go to Bild1</router-link>
-  </p>
-  <!-- route outlet -->
-  <!-- component matched by the route will render here -->
-  <router-view></router-view>
-</div>
-    
-    <script src="/page/app.js"></script>
+  <div id="app" class="ui grid container">
+    <div class="sixteen wide column">
+      <div class="ui menu">
+        <router-link class="item" to="/">Home</router-link>
+        <a class="item">Browse</a>
+        <a class="item active">Submit</a>
+      </div>
+    </div>
+    <div class="sixteen wide column">
+    <h1>My Artscollection</h1>
+    </div>
+    <div class="sixteen wide column">
+    <router-view></router-view>
+    </div>
+    </div>
+  </div>
+
+  <script src="/page/app.js"></script>
 </body>
 
 </html>
