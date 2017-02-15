@@ -40,7 +40,7 @@ const RenderBool = Vue.component('render-bool',{
         field: Object
     }
 })
-const RenderList = Vue.component('render-bool',{
+const RenderList = Vue.component('render-list',{
     template: `<div>{{ field.Name }}: 
     <ul>
     <li v-for="(value,key) in storage[field.Key]"><input v-model="storage[field.Key][key]"></li>
@@ -92,14 +92,19 @@ const Home = Vue.component('home', {
         }
     },
     template: `
-    <div class="ui grid">
-        <div class="five wide column">
-            <div class="ui vertical pointing menu">
-            <span  v-for="(col, key) in collections">
-                <router-link class="item" :to="{ name: 'collection', params: { cid: key}}">
+    <div class="ui stackable grid">
+        <div class="two wide column">
+            <div class="ui relaxed divided selection list">
+            <div
+                class="item"  
+                v-for="(col, key) in collections">
+                <router-link 
+                    active-class="active"
+                    class="header" 
+                    :to="{ name: 'collection', params: { cid: key}}">
                 {{key}}
                 </router-link>
-            </span>
+            </div>
             </div>
              
         </div>
@@ -109,6 +114,7 @@ const Home = Vue.component('home', {
      
     </div>
     `,
+    props: ['cid'],
     mounted: function () {
         this.$http.get('/collection').then(
             (res) => {
@@ -121,18 +127,22 @@ const Home = Vue.component('home', {
 
 const Collection = Vue.component('collection', {
     template: `
-    <div class="ui grid">
-        <div class="six wide column">
-            <h2>Collection</h2>
-            <ul>
-            <li v-for="(item, key) in items.Storages">
-            <router-link :to="{ name: 'item', params: { iid: key}}">
+    <div class="ui stackable grid">
+        <div class="four wide column">
+            <div class="ui mini vertical pointing menu">
+           
+            <span v-for="(item, key) in items.Storages">
+            <router-link 
+                active-class="active"
+                class="item" 
+                :to="{ name: 'item', params: { iid: key}}">
                 {{key}}
                 </router-link>
-            </li>
-            </ul>
+            </span>
+           
+            </div>
        </div>
-       <div class="six wide column">
+       <div class="twelve wide column">
             <router-view></router-view>
         </div>
     </div>
@@ -163,7 +173,7 @@ const Collection = Vue.component('collection', {
 const Item = Vue.component('item', {
     template: `
     <div>
-    <form class="ui form">
+    <form class="ui small form">
         <h3>{{ iid }}</h3>
         
         <div v-for="f in item.fields">
@@ -231,3 +241,12 @@ const router = new VueRouter({
 const app = new Vue({
     router
 }).$mount('#app')
+
+
+$(document)
+    .ready(function () {
+        $('.ui.dropdown')
+            .dropdown()
+            ;
+    })
+    ;
