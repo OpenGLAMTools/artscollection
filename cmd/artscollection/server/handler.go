@@ -17,6 +17,10 @@ var Artscollection map[string]*collection.Collection
 
 var Storager = storage.NewTxtStorage()
 
+func HomeHandler(w http.ResponseWriter, r *http.Request) {
+	http.Redirect(w, r, "/page/index.htm", http.StatusPermanentRedirect)
+}
+
 func allCollectionsHandler(w http.ResponseWriter, r *http.Request) {
 	b, err := json.Marshal(Artscollection)
 	errorLog(err, "allCollectionsHandler: Marshal:")

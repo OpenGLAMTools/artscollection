@@ -14,10 +14,13 @@ import (
 	"github.com/gorilla/mux"
 )
 
+import _ "net/http/pprof"
+
 var ServerPort = ":8081"
 
 func Serve() {
 	router := mux.NewRouter()
+	router.HandleFunc("/", HomeHandler)
 	router.HandleFunc("/collection", allCollectionsHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}", collectionHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/taxonomy/{term}", taxonomyHandler).Methods("GET")
@@ -35,8 +38,14 @@ func Serve() {
 	//router.HandleFunc("/lib/js/react.min.js", reactmin.Handler).Methods("GET")
 	//router.HandleFunc("/lib/js/react-dom.min.js", reactdommin.Handler).Methods("GET")
 	//router.HandleFunc("/lib/js/react-jsonschema-form.js", reactjsonschemaform.Handler).Methods("GET")
+
+	go func() {
+		log.Println(http.ListenAndServe("localhost:6060", nil))
+	}()
+
 	fmt.Println("Starting server", ServerPort)
 	err := http.ListenAndServe(ServerPort, router)
+
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)
 	}
