@@ -166,21 +166,23 @@ const Home = Vue.component('home', {
 const Collection = Vue.component('collection', {
     template: `
     <div class="ui stackable grid">
-        <div class="four wide column">
-            <div class="ui mini vertical pointing menu">
-           
-            <span v-for="(item, key) in items.Storages">
-            <router-link 
-                active-class="active"
-                class="item" 
-                :to="{ name: 'item', params: { iid: key}}">
-                {{key}}
+        <div class="three wide column">
+            <div class="ui relaxed divided selection list">
+            <div
+                class="item"
+                v-bind:class="{ active: key==iid }" 
+                v-for="(item, key) in items.Storages">
+                <router-link 
+                    active-class="active"
+                    class="header" 
+                    :to="{ name: 'item', params: { iid: key}}">
+                    {{key}}
                 </router-link>
-            </span>
-           
             </div>
+            </div>
+
        </div>
-       <div class="twelve wide column">
+       <div class="six wide column">
             <router-view></router-view>
         </div>
     </div>
@@ -205,7 +207,7 @@ const Collection = Vue.component('collection', {
     watch: {
         '$route': 'fetchData'
     },
-    props: ['cid']
+    props: ['cid','iid']
 })
 
 const Item = Vue.component('item', {
@@ -288,22 +290,14 @@ const routes = [
             breadcrumb: true
         },
         children: [
-
+            {
+                path: '/:cid/:iid',
+                name: 'item',
+                component: Item,
+                props: true
+            }
         ]
-    },
-    {
-        path: '/:cid/:iid',
-        name: 'item',
-        components: {
-            default: Item,
-            breadcrumb: Breadcrumb,
-            listcollections: ListCollections
-        },
-        props: {
-            default: true,
-            breadcrumb: true
-        }
-    },
+    }
 ]
 
 
