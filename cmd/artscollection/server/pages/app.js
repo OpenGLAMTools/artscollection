@@ -209,19 +209,47 @@ const Item = Vue.component('item', {
     props: ['cid', 'iid']
 })
 
+const Breadcrumb = Vue.component('breadcrumb', {
+    template: `
+<div class="ui breadcrumb">
+    <router-link class="section" to="/">Home</router-link>
+    <span class="divider" v-if="cid">/</span>
+    <router-link
+                v-if="cid" 
+                
+                class="section" 
+                :to="{ name: 'collection', params: { cid: cid}}">
+                {{cid}}
+                </router-link>
+    <span class="divider" v-if="iid">/</span>
+    <div class="active section" v-if="iid">{{ iid }}</div>
+</div>
+    `,
+    props: ['cid', 'iid']
+})
+
 const routes = [
     {
         path: '/',
         name: 'home',
-        component: Home,
+        components: {
+            default: Home,
+            breadcrumb: Breadcrumb
+        },
         children: [
         ]
     },
     {
         path: '/:cid',
         name: 'collection',
-        props: true,
-        component: Collection,
+        components: {
+            default: Collection,
+            breadcrumb: Breadcrumb
+        },
+        props: {
+            default: true,
+            breadcrumb: true
+        },
         children: [
 
         ]
@@ -229,8 +257,14 @@ const routes = [
     {
         path: '/:cid/:iid',
         name: 'item',
-        props: true,
-        component: Item
+        components: {
+            default: Item,
+            breadcrumb: Breadcrumb
+        },
+        props: {
+            default: true,
+            breadcrumb: true
+        }
     },
 ]
 
@@ -241,7 +275,11 @@ const router = new VueRouter({
 
 
 const app = new Vue({
-    router
+    router,
+    data: {
+        collectionName: "",
+        itemName: ""
+    }
 }).$mount('#app')
 
 
