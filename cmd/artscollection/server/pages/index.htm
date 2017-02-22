@@ -14,14 +14,20 @@
 
 
   <div id="app" class="ui grid container">
-    <div class="sixteen wide column">
+   <div class="sixteen wide column">
       <div class="ui menu">
         <router-link class="item" to="/">Home</router-link>
-        <a class="item">Browse</a>
-        <a class="item active">Submit</a>
+        <div class="ui dropdown item">
+      Collections <i class="dropdown icon"></i>
+      <router-view name="listcollections"></router-view>
+    </div>
+  
+      
       </div>
     </div>
+    <div class="sixteen wide column">
     <router-view name="breadcrumb"></router-view>
+    </div>
     <div class="sixteen wide column">
     <h1>My Artscollection</h1>
     </div>
@@ -31,15 +37,6 @@
     </div>
   </div>
 
-  <div class="ui dropdown">
-  <input type="hidden" name="gender">
-  <i class="dropdown icon"></i>
-  <div class="default text">Gender</div>
-  <div class="menu">
-    <div class="item" data-value="male">Male</div>
-    <div class="item" data-value="female">Female</div>
-  </div>
-</div>
 
   <script src="/page/app.js"></script>
 </body>

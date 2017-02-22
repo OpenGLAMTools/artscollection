@@ -98,6 +98,31 @@ const RenderField = Vue.component('render-field', {
         storage: Object
     }
 })
+const ListCollections = Vue.component('listcollections', {
+    template: `
+    <div class="menu">
+        <router-link 
+                    v-for="(col, key) in collections"
+                    active-class="active"
+                    class="item" 
+                    :to="{ name: 'collection', params: { cid: key}}">
+                {{key}}
+                </router-link>
+    </div>
+    `,
+    data: function () {
+        return {
+            collections: {}
+        }
+    },
+    mounted: function () {
+        this.$http.get('/collection').then(
+            (res) => {
+                this.collections = res.body;
+            }
+        );
+    }
+});
 const Home = Vue.component('home', {
     data: function () {
         return {
@@ -244,7 +269,8 @@ const routes = [
         name: 'home',
         components: {
             default: Home,
-            breadcrumb: Breadcrumb
+            breadcrumb: Breadcrumb,
+            listcollections: ListCollections
         },
         children: [
         ]
@@ -254,7 +280,8 @@ const routes = [
         name: 'collection',
         components: {
             default: Collection,
-            breadcrumb: Breadcrumb
+            breadcrumb: Breadcrumb,
+            listcollections: ListCollections
         },
         props: {
             default: true,
@@ -269,7 +296,8 @@ const routes = [
         name: 'item',
         components: {
             default: Item,
-            breadcrumb: Breadcrumb
+            breadcrumb: Breadcrumb,
+            listcollections: ListCollections
         },
         props: {
             default: true,
