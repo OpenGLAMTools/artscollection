@@ -42,11 +42,21 @@ const RenderBool = Vue.component('render-bool', {
 })
 const RenderList = Vue.component('render-list', {
     template: `<div>{{ field.Name }}: 
-    <ul>
-    <li v-for="(value,key) in storage[field.Key]"><input v-model="storage[field.Key][key]"></li>
-    <li @click="addTag">Add Tag</li>
-    </ul>
+    <div class="ui label" v-for="(value,key) in storage[field.Key]">
+    {{ storage[field.Key][key] }} <i class="delete icon" @click="removeTag(key)"></i>
+    </div><br>
+    <div class="ui right labeled input">
+  <input type="text" v-model="newTagVal">
+  <a class="ui tag label" @click="addTag()">
+    Add {{ field.Name }}
+  </a>
+</div>
     </div>`,
+    data: function (){
+        return {
+            newTagVal: ""
+        }
+    },
     props: {
         storage: Object,
         field: Object
@@ -61,7 +71,10 @@ const RenderList = Vue.component('render-list', {
             if (this.storage[this.field.Key] == null) {
                 this.storage[this.field.Key] = [];
             }
-            this.storage[this.field.Key].push("");
+            this.storage[this.field.Key].push(this.newTagVal);
+        },
+        removeTag: function (key) {
+            this.storage[this.field.Key].splice(key,1);
         }
     }
 })
@@ -175,11 +188,9 @@ const Item = Vue.component('item', {
     <div>
     <form class="ui small form">
         <h3>{{ iid }}</h3>
-        
         <div v-for="f in item.fields">
         <render-field :field=f :storage=item[f.Type] ></render-field>
         </div>
-        
         <button class="ui button" @click="saveData">Save Data</button>
     </form>
     </div>`,
@@ -216,7 +227,6 @@ const Breadcrumb = Vue.component('breadcrumb', {
     <span class="divider" v-if="cid">/</span>
     <router-link
                 v-if="cid" 
-                
                 class="section" 
                 :to="{ name: 'collection', params: { cid: cid}}">
                 {{cid}}
