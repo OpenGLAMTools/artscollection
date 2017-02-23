@@ -72,6 +72,7 @@ const RenderList = Vue.component('render-list', {
                 this.storage[this.field.Key] = [];
             }
             this.storage[this.field.Key].push(this.newTagVal);
+            this.newTagVal = "";
         },
         removeTag: function (key) {
             this.storage[this.field.Key].splice(key,1);

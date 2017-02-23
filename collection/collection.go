@@ -12,6 +12,7 @@ import (
 var StorageFile = "data.json"
 
 // FieldsConfFile defines the default values for the storages
+// That file has to be set into the root folder of the collection
 var FieldsConfFile = "conf.yaml"
 
 // Collection defines the fields for a storage that fields are used as

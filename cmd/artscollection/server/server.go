@@ -23,9 +23,11 @@ func Serve() {
 	router.HandleFunc("/", HomeHandler)
 	router.HandleFunc("/collection", allCollectionsHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}", collectionHandler).Methods("GET")
+
 	router.HandleFunc("/collection/{collection}/taxonomy/{term}", taxonomyHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", itemHandler).Methods("GET")
 	router.HandleFunc("/collection/{collection}/{item}", postItemHandler).Methods("POST")
+	router.HandleFunc("/collection/{collection}/{item}/{img}", imgHandler).Methods("GET")
 	router.HandleFunc("/page/{page}", pageHandler).Methods("GET")
 	router.HandleFunc("/lib/css/semantic.min.css", semanticcss227.Handler).Methods("GET")
 

@@ -75,6 +75,10 @@ func postItemHandler(w http.ResponseWriter, r *http.Request) {
 	errorLog(err, "postItemHandler: Error WriteItem")
 }
 
+func imgHandler(w http.ResponseWriter, r *http.Request) {
+	// serve the image
+}
+
 func pageHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	p := vars["page"]
