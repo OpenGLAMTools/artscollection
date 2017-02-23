@@ -42,6 +42,14 @@ var testFields = []Field{
 		Group: "",
 		Order: 1,
 	},
+	Field{
+		Key:    "6",
+		Name:   "Long Description",
+		Type:   "string",
+		Render: "textarea",
+		Group:  "",
+		Order:  1,
+	},
 }
 
 /*
@@ -61,6 +69,7 @@ func TestSet(t *testing.T) {
 		{"4", "string value", ErrWrongType},
 		{"4", 4, nil},
 		{"5", []string{"a", "b", "c"}, nil},
+		{"6", "Hallo \nText", nil},
 	}
 
 	for _, tc := range testCases {
@@ -82,6 +91,7 @@ func TestGet(t *testing.T) {
 		{"1", true},
 		{"2", "String for field2"},
 		{"4", 2704},
+		{"6", "String from a textarea"},
 	}
 	txt := NewTxtStorage()
 	txt.Fields = testFields
@@ -127,6 +137,7 @@ func TestMarshal(t *testing.T) {
 		{"1", true},
 		{"2", "String for field2"},
 		{"4", 2704},
+		{"6", "String for textarea"},
 	}
 	txt := NewTxtStorage()
 	txt.Fields = testFields

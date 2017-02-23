@@ -24,3 +24,5 @@ _testmain.go
 *.prof
 cmd/artscollection/.artscollection.yaml
 .idea/*
+*.yaml
+cmd/artscollection/.artscollection.yaml

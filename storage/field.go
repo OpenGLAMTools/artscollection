@@ -17,6 +17,10 @@ type Field struct {
 	// Type of the field must match with the defined types
 	// inside of the Data type.
 	Type string `yaml:"type"`
+	// Render can be set, when there should be a different
+	// field inside the gui. For example a string could be rendered
+	// as a textarea
+	Render string `yaml:"render"`
 	// The name of a group the field is used.
 	Group string `yaml:"group"`
 	// Items are ordered inside the group.

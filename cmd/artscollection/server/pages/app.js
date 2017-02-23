@@ -1,7 +1,10 @@
 const RenderString = Vue.component('render-string', {
     template: `<div class="field">
-        <label>{{ field.Name }}</label> 
-        <input v-model="storage[field.Key]"></div>`,
+        <label>{{ field.Name }}</label>
+        <input v-if="field.Render === ''" v-model="storage[field.Key]">
+        <textarea v-if="field.Render === 'textarea'" v-model="storage[field.Key]"></textarea>
+        </div>`,
+        
     created: function () {
         if (this.storage[this.field.Key] == null) {
             this.$set(this.storage, this.field.Key, "")
@@ -12,6 +15,7 @@ const RenderString = Vue.component('render-string', {
         field: Object
     }
 })
+
 const RenderInteger = Vue.component('render-integer', {
     template: `<div class="field">
     <label>{{ field.Name }}</label> 
