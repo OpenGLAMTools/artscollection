@@ -3,3 +3,4 @@ serverPort: :8081
 collections:
         col2: C:\Users\Schroepfer\test\collections\col2
         col1: C:\Users\Schroepfer\test\collections\col1
+        Meine Bilder: C:\Users\Schroepfer\test\collections\Meine Bilder

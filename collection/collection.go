@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"path/filepath"
+	"strings"
 
 	"github.com/OpenGLAMTools/artscollection/storage"
 )
@@ -15,6 +16,11 @@ var StorageFile = "data.json"
 // That file has to be set into the root folder of the collection
 var FieldsConfFile = "conf.yaml"
 
+// SupportedImageExt defines the extensions for the supported Images
+// If a file with such extension is located inside the item folder it
+// will be handled as an image.
+var SupportedImageExt = []string{".jpg", ".jpeg", ".png"}
+
 // Collection defines the fields for a storage that fields are used as
 // default for new storages.
 type Collection struct {
@@ -22,6 +28,8 @@ type Collection struct {
 	Fields []storage.Field
 	// The data storage
 	Storages map[string]*storage.Txt
+	// All the images from a folder
+	Images map[string][]string
 	// Index map for the SliceString values. The logik of the keys is
 	// map[Field.Key]map[SliceStringValue]
 	// SliceStrings are used to support taxonomy like for example tags
@@ -35,6 +43,7 @@ func NewCollection(fpath string) *Collection {
 	return &Collection{
 		Storages:         make(map[string]*storage.Txt),
 		SliceStringIndex: make(map[string]map[string][]*storage.Txt),
+		Images:           make(map[string][]string),
 		fpath:            fpath,
 	}
 }
@@ -130,7 +139,39 @@ func LoadTxt(fpath string) (*Collection, error) {
 			s.Fields = c.Fields
 		}
 		c.Storages[fi.Name()] = s
+		c.Images[fi.Name()], err = loadImages(filepath.Join(fpath, fi.Name()))
+		if err != nil {
+			return c, err
+		}
 	}
 	c.MakeSliceStringIndex()
 	return c, nil
+}
+
+func loadImages(fpath string) ([]string, error) {
+	var images []string
+	dir, err := ioutil.ReadDir(fpath)
+	if err != nil {
+		return images, err
+	}
+	for _, fi := range dir {
+		if fi.IsDir() {
+			continue
+		}
+		imgPath := fi.Name()
+		if isSupportedImage(imgPath) {
+			images = append(images, imgPath)
+		}
+	}
+	return images, nil
+}
+
+// returns true, when the file is a supported image
+func isSupportedImage(fpath string) bool {
+	for _, e := range SupportedImageExt {
+		if strings.EqualFold(e, filepath.Ext(fpath)) {
+			return true
+		}
+	}
+	return false
 }
