@@ -60,6 +60,11 @@ func NewCollection(fpath string) *Collection {
 	}
 }
 
+// GetBasePath returns the filepath to the collection inside of the filesystem
+func (c *Collection) GetBasePath() string {
+	return c.fpath
+}
+
 // GetItem returns a storage from the collection
 func (c *Collection) GetItem(ID string) (Item, bool) {
 	var i Item
@@ -76,6 +81,13 @@ func (c *Collection) WriteItem(ID string, s *storage.Txt) error {
 		StorageFile,
 	)
 	return storage.WriteTxt(s, itemPath)
+}
+
+// GetItemImages returns the image names, the basepath to load the
+// images from the filesystem and a ok value
+func (c *Collection) GetItemImages(ID string) (images []string, basepath string, ok bool) {
+	images, ok = c.Images[ID]
+	return images, c.fpath, ok
 }
 
 // Marshal returns the whole collection as json object

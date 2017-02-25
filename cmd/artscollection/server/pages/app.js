@@ -47,7 +47,7 @@ const RenderBool = Vue.component('render-bool', {
 const RenderList = Vue.component('render-list', {
     template: `<div>{{ field.Name }}: 
     <div class="ui label" v-for="(value,key) in storage[field.Key]">
-    {{ storage[field.Key][key] }} <i class="delete icon" @click="removeTag(key)"></i>
+    {{ storage[field.Key][key] }} <a class="detail" @click="removeTag(key)">(delete)</a>
     </div><br>
     <div class="ui right labeled input">
   <input type="text" v-model="newTagVal">
@@ -187,9 +187,9 @@ const Collection = Vue.component('collection', {
             </div>
 
        </div>
-       <div class="six wide column">
+       <div class="twelve wide column">
             <router-view></router-view>
-        </div>
+       </div>
     </div>
     `,
     data: function () {
@@ -215,9 +215,23 @@ const Collection = Vue.component('collection', {
     props: ['cid','iid']
 })
 
-const Item = Vue.component('item', {
+const Images = Vue.component('images', {
     template: `
     <div>
+    <img v-for="i in item.images" class="ui fluid image" :src="basepath + i">
+    </div>`,
+    computed: {
+        basepath: function (){
+            return "/collection/"+this.cid+"/"+this.iid+"/"
+        }
+    },
+    props: ['item','cid','iid']
+})
+
+const Item = Vue.component('item', {
+    template: `
+    <div class="ui stackable two column grid">
+    <div class="column">
     <form class="ui small form">
         <h3>{{ iid }}</h3>
         <div v-for="f in item.data.fields">
@@ -225,11 +239,18 @@ const Item = Vue.component('item', {
         </div>
         <button class="ui button" @click="saveData">Save Data</button>
     </form>
+    </div>
+    <div class="column">
+    <images :item=item :cid=cid :iid=iid></images>
+    </div>
     </div>`,
     data: function () {
         return {
             item: { data: {fields: []} }
         }
+    },
+    components: {
+        'images': Images
     },
     methods: {
         fetchData: function () {
@@ -240,7 +261,7 @@ const Item = Vue.component('item', {
             );
         },
         saveData: function () {
-            this.$http.post('/collection/' + this.cid + '/' + this.iid, this.item);
+            this.$http.post('/collection/' + this.cid + '/' + this.iid, this.item.data);
         }
     },
     created: function () {
@@ -251,6 +272,8 @@ const Item = Vue.component('item', {
     },
     props: ['cid', 'iid']
 })
+
+
 
 const Breadcrumb = Vue.component('breadcrumb', {
     template: `

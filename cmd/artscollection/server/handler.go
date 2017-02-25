@@ -76,7 +76,18 @@ func postItemHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func imgHandler(w http.ResponseWriter, r *http.Request) {
-	// serve the image
+	coll := getCollection(r)
+	coll.Reload()
+	vars := mux.Vars(r)
+	itemID := vars["item"]
+	img := vars["img"]
+	basepath := coll.GetBasePath()
+	imgPath := filepath.Join(
+		basepath,
+		itemID,
+		img,
+	)
+	http.ServeFile(w, r, imgPath)
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {

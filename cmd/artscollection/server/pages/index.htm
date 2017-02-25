@@ -14,27 +14,27 @@
 
 
   <div id="app" class="ui grid container">
-   <div class="sixteen wide column">
+    <div class="sixteen wide column">
       <div class="ui menu">
         <router-link class="item" to="/">Home</router-link>
         <div class="ui dropdown item">
-      Collections <i class="dropdown icon"></i>
-      <router-view name="listcollections"></router-view>
-    </div>
-  
-      
+          Collections <i class="dropdown icon"></i>
+          <router-view name="listcollections"></router-view>
+        </div>
+
+
       </div>
     </div>
     <div class="sixteen wide column">
-    <router-view name="breadcrumb"></router-view>
+      <router-view name="breadcrumb"></router-view>
     </div>
     <div class="sixteen wide column">
-    <h1>My Artscollection</h1>
+      <h1>My Artscollection</h1>
     </div>
     <div class="sixteen wide column">
-    <router-view></router-view>
+      <router-view></router-view>
     </div>
-    </div>
+  </div>
   </div>
 
 
