@@ -220,15 +220,15 @@ const Item = Vue.component('item', {
     <div>
     <form class="ui small form">
         <h3>{{ iid }}</h3>
-        <div v-for="f in item.fields">
-        <render-field :field=f :storage=item[f.Type] ></render-field>
+        <div v-for="f in item.data.fields">
+        <render-field :field=f :storage=item.data[f.Type] ></render-field>
         </div>
         <button class="ui button" @click="saveData">Save Data</button>
     </form>
     </div>`,
     data: function () {
         return {
-            item: { fields: [] }
+            item: { data: {fields: []} }
         }
     },
     methods: {

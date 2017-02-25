@@ -21,6 +21,18 @@ var FieldsConfFile = "conf.yaml"
 // will be handled as an image.
 var SupportedImageExt = []string{".jpg", ".jpeg", ".png"}
 
+// Item is used as API to provide also the images of the collection inside
+// of one object.
+type Item struct {
+	Data   *storage.Txt `json:"data"`
+	Images []string     `json:"images"`
+}
+
+// Marshal is used inside the httphandler to marshal the item
+func (i *Item) Marshal() ([]byte, error) {
+	return json.MarshalIndent(i, "", "  ")
+}
+
 // Collection defines the fields for a storage that fields are used as
 // default for new storages.
 type Collection struct {
@@ -49,8 +61,11 @@ func NewCollection(fpath string) *Collection {
 }
 
 // GetItem returns a storage from the collection
-func (c *Collection) GetItem(ID string) (*storage.Txt, bool) {
-	i, ok := c.Storages[ID]
+func (c *Collection) GetItem(ID string) (Item, bool) {
+	var i Item
+	var ok bool
+	i.Data, ok = c.Storages[ID]
+	i.Images = c.Images[ID]
 	return i, ok
 }
 
