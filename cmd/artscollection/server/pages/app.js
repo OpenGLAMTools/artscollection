@@ -218,14 +218,19 @@ const Collection = Vue.component('collection', {
 const Images = Vue.component('images', {
     template: `
     <div>
-    <img v-for="i in item.images" class="ui fluid image" :src="basepath + i">
+    <img v-for="i in item.images" class="ui fluid image" :src="makePath(i)">
     </div>`,
+    methods: {
+        makePath: function (f){
+            return "/collection/"+this.cid+"/"+this.iid+"/" + f
+        }
+    },
     computed: {
         basepath: function (){
             return "/collection/"+this.cid+"/"+this.iid+"/"
         }
     },
-    props: ['item','cid','iid']
+    props: ['item','cid','iid','dataLoaded']
 })
 
 const Item = Vue.component('item', {
@@ -241,12 +246,13 @@ const Item = Vue.component('item', {
     </form>
     </div>
     <div class="column">
-    <images :item=item :cid=cid :iid=iid></images>
+    <images v-if="dataLoaded" :item=item :cid=cid :iid=iid ></images>
     </div>
     </div>`,
     data: function () {
         return {
-            item: { data: {fields: []} }
+            item: { data: {fields: []} },
+            dataLoaded: false
         }
     },
     components: {
@@ -254,9 +260,11 @@ const Item = Vue.component('item', {
     },
     methods: {
         fetchData: function () {
+            this.dataLoaded = false;
             this.$http.get('/collection/' + this.cid + '/' + this.iid).then(
                 (res) => {
                     this.item = res.body;
+                    this.dataLoaded = true;
                 }
             );
         },
