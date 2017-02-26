@@ -3,6 +3,10 @@ package server
 import (
 	"encoding/json"
 	"fmt"
+	"image"
+	"image/jpeg"
+	_ "image/jpeg"
+	_ "image/png"
 	"io/ioutil"
 	"net/http"
 	"os"
@@ -11,11 +15,20 @@ import (
 	"github.com/OpenGLAMTools/artscollection/collection"
 	"github.com/OpenGLAMTools/artscollection/storage"
 	"github.com/gorilla/mux"
+	"github.com/nfnt/resize"
 )
 
 var Artscollection map[string]*collection.Collection
 
 var Storager = storage.NewTxtStorage()
+
+// ImageMaxWidth specifies the width in pixel wich the served image is
+// resized
+var ImageMaxWidth = 800
+
+// ImageMaxHeight specifies the height in pixel wich the served image is
+// resized
+var ImageMaxHeight = 800
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/page/index.htm", http.StatusPermanentRedirect)
@@ -80,14 +93,22 @@ func imgHandler(w http.ResponseWriter, r *http.Request) {
 	coll.Reload()
 	vars := mux.Vars(r)
 	itemID := vars["item"]
-	img := vars["img"]
+	imgName := vars["img"]
 	basepath := coll.GetBasePath()
 	imgPath := filepath.Join(
 		basepath,
 		itemID,
-		img,
+		imgName,
 	)
-	http.ServeFile(w, r, imgPath)
+	// Resize the image
+	imFile, err := os.Open(imgPath)
+	errorLog(err, "imgHander: Open file:")
+	img, _, err := image.Decode(imFile)
+	errorLog(err, "imgHandler: Decode image:")
+	t := resize.Thumbnail(uint(ImageMaxWidth), uint(ImageMaxHeight), img, resize.NearestNeighbor)
+	// All pictures are served as png format.
+	//png.Encode(w, t)
+	jpeg.Encode(w, t, nil)
 }
 
 func pageHandler(w http.ResponseWriter, r *http.Request) {
