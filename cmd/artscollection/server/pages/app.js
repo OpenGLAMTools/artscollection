@@ -218,7 +218,7 @@ const Collection = Vue.component('collection', {
 const Images = Vue.component('images', {
     template: `
     <div>
-    <img v-for="i in item.images" class="ui fluid image" :src="makePath(i)">
+    <img v-for="i in item.images" class="ui fluid rounded image" :src="makePath(i)">
     </div>`,
     methods: {
         makePath: function (f){

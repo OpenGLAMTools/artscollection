@@ -24,11 +24,14 @@ var Storager = storage.NewTxtStorage()
 
 // ImageMaxWidth specifies the width in pixel wich the served image is
 // resized
-var ImageMaxWidth = 800
+var ImageMaxWidth = 960
 
 // ImageMaxHeight specifies the height in pixel wich the served image is
 // resized
-var ImageMaxHeight = 800
+var ImageMaxHeight = 960
+
+// ImageResizeFunction defines the resize algorithm
+var ImageResizeFunction = resize.Lanczos3
 
 func HomeHandler(w http.ResponseWriter, r *http.Request) {
 	http.Redirect(w, r, "/page/index.htm", http.StatusPermanentRedirect)
@@ -105,7 +108,7 @@ func imgHandler(w http.ResponseWriter, r *http.Request) {
 	errorLog(err, "imgHander: Open file:")
 	img, _, err := image.Decode(imFile)
 	errorLog(err, "imgHandler: Decode image:")
-	t := resize.Thumbnail(uint(ImageMaxWidth), uint(ImageMaxHeight), img, resize.NearestNeighbor)
+	t := resize.Thumbnail(uint(ImageMaxWidth), uint(ImageMaxHeight), img, ImageResizeFunction)
 	// All pictures are served as png format.
 	//png.Encode(w, t)
 	jpeg.Encode(w, t, nil)
