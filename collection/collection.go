@@ -24,12 +24,30 @@ var SupportedImageExt = []string{".jpg", ".jpeg", ".png"}
 // Item is used as API to provide also the images of the collection inside
 // of one object.
 type Item struct {
+	ID     string       `json:"-"`
 	Data   *storage.Txt `json:"data"`
+	Title  string       `json:"title"`
 	Images []string     `json:"images"`
+}
+
+func NewItem(s *storage.Txt, id string) *Item {
+	var item Item
+	item.ID = id
+	item.Data = s
+	item.SetTitle()
+	return &item
+}
+
+func (i *Item) SetTitle() {
+	i.Title, _ = i.Data.GetString("title")
+	if i.Title == "" {
+		i.Title = i.ID
+	}
 }
 
 // Marshal is used inside the httphandler to marshal the item
 func (i *Item) Marshal() ([]byte, error) {
+	i.SetTitle()
 	return json.MarshalIndent(i, "", "  ")
 }
 
@@ -39,13 +57,15 @@ type Collection struct {
 	// Default fields for all the storages of that collection
 	Fields []storage.Field
 	// The data storage
-	Storages map[string]*storage.Txt
+	//Storages map[string]*storage.Txt
+	// Items include the storages
+	Items map[string]*Item
 	// All the images from a folder
 	Images map[string][]string
 	// Index map for the SliceString values. The logik of the keys is
 	// map[Field.Key]map[SliceStringValue]
 	// SliceStrings are used to support taxonomy like for example tags
-	SliceStringIndex map[string]map[string][]*storage.Txt
+	SliceStringIndex map[string]map[string][]*Item
 	// The filepath which is the root folder of the collection.
 	fpath string
 }
@@ -53,8 +73,8 @@ type Collection struct {
 // NewCollection returns an empty collection
 func NewCollection(fpath string) *Collection {
 	return &Collection{
-		Storages:         make(map[string]*storage.Txt),
-		SliceStringIndex: make(map[string]map[string][]*storage.Txt),
+		Items:            make(map[string]*Item),
+		SliceStringIndex: make(map[string]map[string][]*Item),
 		Images:           make(map[string][]string),
 		fpath:            fpath,
 	}
@@ -67,11 +87,9 @@ func (c *Collection) GetBasePath() string {
 
 // GetItem returns a storage from the collection
 func (c *Collection) GetItem(ID string) (Item, bool) {
-	var i Item
-	var ok bool
-	i.Data, ok = c.Storages[ID]
+	i, ok := c.Items[ID]
 	i.Images = c.Images[ID]
-	return i, ok
+	return *i, ok
 }
 
 func (c *Collection) WriteItem(ID string, s *storage.Txt) error {
@@ -118,10 +136,10 @@ func (c *Collection) MakeSliceStringIndex() {
 		if f.Type == storage.TypeSliceString {
 			// If map is not allocated for a field
 			if c.SliceStringIndex[f.ID()] == nil {
-				c.SliceStringIndex[f.ID()] = make(map[string][]*storage.Txt)
+				c.SliceStringIndex[f.ID()] = make(map[string][]*Item)
 			}
-			for _, s := range c.Storages {
-				vals, ok := s.GetSliceString(f.ID())
+			for _, s := range c.Items {
+				vals, ok := s.Data.GetSliceString(f.ID())
 				if ok {
 					for _, v := range vals {
 						c.SliceStringIndex[f.ID()][v] = append(c.SliceStringIndex[f.ID()][v], s)
@@ -165,11 +183,13 @@ func LoadTxt(fpath string) (*Collection, error) {
 		if len(s.Fields) == 0 {
 			s.Fields = c.Fields
 		}
-		c.Storages[fi.Name()] = s
+		c.Items[fi.Name()] = NewItem(s, fi.Name())
+		//c.Storages[fi.Name()] = s
 		c.Images[fi.Name()], err = loadImages(filepath.Join(fpath, fi.Name()))
 		if err != nil {
 			return c, err
 		}
+
 	}
 	c.MakeSliceStringIndex()
 	return c, nil

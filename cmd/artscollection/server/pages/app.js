@@ -176,12 +176,12 @@ const Collection = Vue.component('collection', {
             <div
                 class="item"
                 v-bind:class="{ active: key==iid }" 
-                v-for="(item, key) in items.Storages">
+                v-for="(item, key) in items.Items">
                 <router-link 
                     active-class="active"
                     class="header" 
                     :to="{ name: 'item', params: { iid: key}}">
-                    {{key}}
+                    {{item.title}}
                 </router-link>
             </div>
             </div>
